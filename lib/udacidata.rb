@@ -12,6 +12,6 @@ class Udacidata
 
   def self.products
     products = CSV.read(DATA_FILE).drop(1) || []
-    products.map{|p| Product.create(id: p[0], brand: p[1], name: p[2], price: p[3])}
+    products.map{|p| Product.create(id: p[0], brand: p[1], name: p[2], price: p[3])} || []
   end
 end
