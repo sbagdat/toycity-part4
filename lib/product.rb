@@ -21,17 +21,17 @@ class Product < Udacidata
   def self.create(options = {})
 
     product = Product.new(options)
-    unless @@products.include? product
-      Udacidata.add_product(product)
-      @@products << product
-    end
-
+    Udacidata.add_product(product) unless @@products.include?(product)
     product
   end
 
   def self.all
-    # @@products
     Udacidata.products
+  end
+
+  def self.first(count=nil)
+    return Udacidata.products.first unless count
+    Udacidata.products[0..count-1]
   end
 
   private
