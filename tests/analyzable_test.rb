@@ -1,4 +1,5 @@
 require 'minitest/autorun'
+require 'minitest/pride'
 require_relative '../lib/product'
 require_relative '../lib/analyzable'
 require_relative '../data/seeds'

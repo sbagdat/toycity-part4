@@ -3,8 +3,9 @@ require_relative 'udacidata'
 class Product < Udacidata
   attr_reader :id, :price, :brand, :name
 
-  def initialize(opts={})
+  @@products = []
 
+  def initialize(opts={})
     # Get last ID from the database if ID exists
     get_last_id
     # Set the ID if it was passed in, otherwise use last existing ID
@@ -18,7 +19,19 @@ class Product < Udacidata
   end
 
   def self.create(options = {})
-    Udacidata.add_product Product.new(options)
+
+    product = Product.new(options)
+    unless @@products.include? product
+      Udacidata.add_product(product)
+      @@products << product
+    end
+
+    product
+  end
+
+  def self.all
+    # @@products
+    Udacidata.products
   end
 
   private

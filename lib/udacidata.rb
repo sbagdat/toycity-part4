@@ -3,10 +3,15 @@ require_relative 'errors'
 require 'csv'
 
 class Udacidata
-
+  DATA_FILE = File.dirname(__FILE__) + "/../data/data.csv"
   # Your code goes here!
   def self.add_product(product)
-    file = File.dirname(__FILE__) + "/../data/data.csv"
-    CSV.open(file, 'a+') { |csv| csv << [product.id, product.brand, product.name, product.price] }
+    CSV.open(DATA_FILE, 'a+') { |csv| csv << [product.id, product.brand, product.name, product.price] }
+    product
+  end
+
+  def self.products
+    products = CSV.read(DATA_FILE).to_a.delete(0) || []
+    products.map{|p| Product.create(id: p[0], brand: p[1], name: p[2], price: p[3])}
   end
 end
