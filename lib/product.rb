@@ -13,8 +13,12 @@ class Product < Udacidata
     auto_increment if !opts[:id]
     # Set the brand, name, and price normally
     @brand = opts[:brand]
-    @name = opts[:name]
+    @name  = opts[:name]
     @price = opts[:price]
+  end
+
+  def self.create(options = {})
+    Udacidata.add_product Product.new(options)
   end
 
   private

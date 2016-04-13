@@ -18,6 +18,8 @@ class TestUdacidata < MiniTest::Test
       Product.create(brand: "WalterToys", name: "Sticky Notes", price: 34.00)
     end
     after = CSV.read(@data_path).length
+    puts "Before: #{before}"
+    puts "After: #{after}"
     assert(after == before + 5)
   end
 
