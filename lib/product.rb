@@ -39,6 +39,10 @@ class Product < Udacidata
     Udacidata.products[-count..-1]
   end
 
+  def self.find(id)
+    Product.all.select {|p| return p if p.id == id} || nil
+  end
+
   private
 
     # Reads the last line of the data file, and gets the id if one exists
