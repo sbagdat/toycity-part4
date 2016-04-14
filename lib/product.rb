@@ -3,8 +3,6 @@ require_relative 'udacidata'
 class Product < Udacidata
   attr_reader :id, :price, :brand, :name
 
-  @@products = []
-
   def initialize(opts={})
     # Get last ID from the database if ID exists
     get_last_id
@@ -18,29 +16,36 @@ class Product < Udacidata
     @price = opts[:price]
   end
 
-  def self.create(options = {})
+  class << self
+    def create(options = {})
+      product = Product.new(options)
+      add_product(product) unless options[:id]
+      product
+    end
 
-    product = Product.new(options)
-    Udacidata.add_product(product) unless @@products.include?(product)
-    product
-  end
+    def all
+      products
+    end
 
-  def self.all
-    Udacidata.products
-  end
+    def first(count=nil)
+      return products.first unless count
+      products[0..count-1]
+    end
 
-  def self.first(count=nil)
-    return Udacidata.products.first unless count
-    Udacidata.products[0..count-1]
-  end
+    def last(count=nil)
+      return products.last unless count
+      products[-count..-1]
+    end
 
-  def self.last(count=nil)
-    return Udacidata.products.last unless count
-    Udacidata.products[-count..-1]
-  end
+    def find(id)
+      Product.all.select {|p| return p if p.id == id} || nil
+    end
 
-  def self.find(id)
-    Product.all.select {|p| return p if p.id == id} || nil
+    def destroy(id)
+      pr = find(id)
+      remove_product(id)
+      pr
+    end
   end
 
   private
