@@ -17,6 +17,9 @@ class Product < Udacidata
   end
 
   class << self
+
+    self.create_finder_methods(:price, :brand, :name)
+
     def create(options = {})
       product = Product.new(options)
       add_product(product) unless options[:id]
@@ -41,11 +44,31 @@ class Product < Udacidata
       Product.all.select {|p| return p if p.id == id} || nil
     end
 
+    def find_by(attribute, value)
+      Product.all.each {|p| return p if p.public_send(attribute.to_sym) == value}
+    end
+
+    def where(options = {})
+      products = Product.all
+      options.each do |option, value|
+        products = products.select {|p| p.public_send(option.to_sym) == value}
+      end
+      products
+    end
+
     def destroy(id)
       pr = find(id)
       remove_product(id)
       pr
     end
+  end
+
+  def update(opts = {})
+    @brand = opts[:brand] if opts[:brand]
+    @name  = opts[:name]  if opts[:name]
+    @price = opts[:price] if opts[:price]
+    Product.destroy(@id)
+    Udacidata.add_product(self)
   end
 
   private
@@ -64,3 +87,5 @@ class Product < Udacidata
     end
 
 end
+
+
