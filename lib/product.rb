@@ -3,6 +3,40 @@ require_relative 'udacidata'
 class Product < Udacidata
   attr_reader :id, :price, :brand, :name
 
+  class << self
+    self.create_finder_methods(:price, :brand, :name)
+
+    def create(options = {})
+      product = Product.new(options)
+      add_product(product) unless options[:id]
+      product # Take a look at that product is necessary
+    end
+
+    def find(id)
+      all.select {|p| return p if p.id == id} || nil
+    end
+
+    def find_by(attribute, value)
+      all.each {|p| return p if p.public_send(attribute.to_sym) == value}
+    end
+
+    def where(options = {})
+      products = all
+      options.each do |option, value|
+        products = products.select {|p| p.public_send(option.to_sym) == value}
+      end
+      products
+    end
+
+    def destroy(id)
+      pr = find(id)
+      remove_product(id)
+      pr
+    end
+
+
+  end
+
   def initialize(opts={})
     # Get last ID from the database if ID exists
     get_last_id
@@ -16,53 +50,6 @@ class Product < Udacidata
     @price = opts[:price]
   end
 
-  class << self
-
-    self.create_finder_methods(:price, :brand, :name)
-
-    def create(options = {})
-      product = Product.new(options)
-      add_product(product) unless options[:id]
-      product
-    end
-
-    def all
-      products
-    end
-
-    def first(count=nil)
-      return products.first unless count
-      products[0..count-1]
-    end
-
-    def last(count=nil)
-      return products.last unless count
-      products[-count..-1]
-    end
-
-    def find(id)
-      Product.all.select {|p| return p if p.id == id} || nil
-    end
-
-    def find_by(attribute, value)
-      Product.all.each {|p| return p if p.public_send(attribute.to_sym) == value}
-    end
-
-    def where(options = {})
-      products = Product.all
-      options.each do |option, value|
-        products = products.select {|p| p.public_send(option.to_sym) == value}
-      end
-      products
-    end
-
-    def destroy(id)
-      pr = find(id)
-      remove_product(id)
-      pr
-    end
-  end
-
   def update(opts = {})
     @brand = opts[:brand] if opts[:brand]
     @name  = opts[:name]  if opts[:name]
@@ -72,7 +59,6 @@ class Product < Udacidata
   end
 
   private
-
     # Reads the last line of the data file, and gets the id if one exists
     # If it exists, increment and use this value
     # Otherwise, use 0 as starting ID number
@@ -85,7 +71,6 @@ class Product < Udacidata
     def auto_increment
       @@count_class_instances += 1
     end
-
 end
 
 
