@@ -154,7 +154,7 @@ class TestUdacidata < MiniTest::Test
 
   def test_update_changes_product_info_in_database
     database_before = CSV.read(@data_path)
-    product = Product.find(3).update(price: 5000.00, brand: "Hello World")
+    Product.find(3).update(price: 5000.00, brand: "Hello World")
     database_after = CSV.read(@data_path)
     diff = (database_after - database_before).first
     assert_equal(diff.include?("Hello World"), true)

@@ -3,40 +3,6 @@ require_relative 'udacidata'
 class Product < Udacidata
   attr_reader :id, :price, :brand, :name
 
-  class << self
-    self.create_finder_methods(:price, :brand, :name)
-
-    def create(options = {})
-      product = Product.new(options)
-      add_product(product) unless options[:id]
-      product # Take a look at that product is necessary
-    end
-
-    def find(id)
-      all.select {|p| return p if p.id == id} || nil
-    end
-
-    def find_by(attribute, value)
-      all.each {|p| return p if p.public_send(attribute.to_sym) == value}
-    end
-
-    def where(options = {})
-      products = all
-      options.each do |option, value|
-        products = products.select {|p| p.public_send(option.to_sym) == value}
-      end
-      products
-    end
-
-    def destroy(id)
-      pr = find(id)
-      remove_product(id)
-      pr
-    end
-
-
-  end
-
   def initialize(opts={})
     # Get last ID from the database if ID exists
     get_last_id
@@ -50,12 +16,12 @@ class Product < Udacidata
     @price = opts[:price]
   end
 
-  def update(opts = {})
-    @brand = opts[:brand] if opts[:brand]
-    @name  = opts[:name]  if opts[:name]
-    @price = opts[:price] if opts[:price]
-    Product.destroy(@id)
-    Udacidata.add_product(self)
+  def update(options = {})
+    Udacidata.update(self.to_h.merge(options))
+  end
+
+  def to_h
+    {id: @id, brand: @brand, name: @name, price: @price}
   end
 
   private
