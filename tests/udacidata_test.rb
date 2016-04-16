@@ -161,6 +161,29 @@ class TestUdacidata < MiniTest::Test
     assert_equal(database_before.size, database_after.size)
   end
 
+  # Add some test here to test error raising
+  def test_find_method_raises_error_if_product_not_found
+    assert_raises(ProductNotFoundError) { Product.find(100000) }
+  end
+
+  def test_find_by_brand_method_raises_error_if_product_not_found
+    assert_raises(ProductNotFoundError) { Product.find_by_brand("Fake Brand") }
+  end
+
+  def test_find_by_brand_method_raises_error_if_product_not_found
+    assert_raises(ProductNotFoundError) { Product.find_by_name("Fake Name") }
+  end
+
+  def test_where_method_raises_error_if_product_not_found
+    assert_raises(ProductNotFoundError) { Product.where(name: "Fake Name") }
+  end
+
+  def test_destroy_method_raises_error_if_product_not_found
+    assert_raises(ProductNotFoundError) { Product.destroy(10000000) }
+  end
+
+
+
   # The "teardown" method always runs after the tests are done
   # "teardown" will delete the test database when tests are done
   def teardown

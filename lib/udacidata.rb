@@ -1,6 +1,7 @@
 require_relative 'find_by'
 require_relative 'errors'
 require 'csv'
+require 'pp'
 
 class Udacidata
   DB = File.dirname(__FILE__) + "/../data/data.csv"
@@ -56,20 +57,21 @@ class Udacidata
     end
 
     def find_by(options={})
-      result = all
+      result = nil
       if options[:where]
         options.delete(:where)
         options.each { |attribute, value|
-          result = result.select {|p| p.public_send(attribute.to_sym) == value}
+          result = all.select {|p| p.public_send(attribute) == value}
+          result = nil if result.empty?
         }
       else
-        result = all.each {|p| return p if p.public_send(options.first[0]) == options.first[1]}
+        result = all.detect {|p| p.public_send(options.first[0]) == options.first[1]}
       end
-      result
+      result || raise(ProductNotFoundError, "Product couldn't found!")
     end
 
     def take_items(from, n=nil)
-      n ? all.send(from, n) : all.send(from)
+      n ? all.send(from, n) : all.public_send(from)
     end
 
     def remove(id)
